@@ -1,9 +1,22 @@
-
+# Устанавливаем базовый образ Ubuntu
 FROM ubuntu:latest
 
-RUN apt update && apt install  openssh-server sudo -y
-RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 9999 test
-RUN service ssh start
+# Обновляем пакеты и устанавливаем необходимые утилиты
+RUN apt-get update && \
+    apt-get install -y \
+    openssh-server \
+    sudo
+
+# Создаем директорию для хранения ключей SSH и создаем файл конфигурации
+RUN mkdir /var/run/sshd && \
+    echo 'root:password' | chpasswd
+
+# Разрешаем вход по паролю для root (не рекомендуется для продакшн-окружений)
+RUN sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Открываем порт 22 для SSH
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd","-D"]
+# Запускаем SSH сервер
+CMD ["/usr/sbin/sshd", "-D"]
