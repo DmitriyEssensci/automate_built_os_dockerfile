@@ -1,4 +1,4 @@
-# Owner-avatar-automate_built_os_dockerfile
+# Автоматическая сборка контейнеров по докер файлу
 
 ***Сборка образа:***  
 	sudo docker build -f dockerfile . -t automate_project_os/ubuntu:v1
